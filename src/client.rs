@@ -13,7 +13,7 @@ use serde_json::Value as Json;
 use std::convert::{TryFrom, TryInto as _};
 use std::future::Future;
 use tokio::sync::{mpsc, oneshot};
-use webdriver::command::{SendKeysParameters, WebDriverCommand};
+use webdriver::command::{PrintParameters, SendKeysParameters, WebDriverCommand};
 use webdriver::common::{FrameId, ELEMENT_KEY};
 
 // Used only under `native-tls`
@@ -65,7 +65,7 @@ impl Client {
     {
         Self::with_capabilities_and_connector(
             webdriver,
-            &webdriver::capabilities::Capabilities::new(),
+            &Capabilities::new(),
             connector,
         )
         .await
@@ -802,6 +802,25 @@ impl Client {
         }
     }
 }
+
+
+/// [Print](https://www.w3.org/TR/webdriver/#print)
+impl Client {
+    /// Get a PDF-Print of the current page. Chrome: Headless-Mode only.
+    ///
+    /// See [18.1 Print Page](https://www.w3.org/TR/webdriver/#print-page) of the
+    /// WebDriver standard.
+    #[cfg_attr(docsrs, doc(alias = "Print Page"))]
+    pub async fn print_page(&self,params: Option<PrintParameters>) -> Result<Vec<u8>, error::CmdError> {
+        let src = self.issue(WebDriverCommand::Print(params.unwrap_or_default())).await?;
+        if let Some(src) = src.as_str() {
+            base64::decode(src).map_err(error::CmdError::ImageDecodeError)
+        } else {
+            Err(error::CmdError::NotW3C(src))
+        }
+    }
+}
+
 
 /// Operations that wait for a change on the page.
 impl Client {
