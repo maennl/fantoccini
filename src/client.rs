@@ -23,7 +23,7 @@ use crate::ClientBuilder;
 /// A WebDriver client tied to a single browser
 /// [session](https://www.w3.org/TR/webdriver1/#sessions).
 ///
-/// Use [`ClientBuilder`](crate::ClientBuilder) to create a new session.
+/// Use [`ClientBuilder`](ClientBuilder) to create a new session.
 ///
 /// Note that most callers should explicitly call `Client::close`, and wait for the returned
 /// future before exiting. Not doing so may result in the WebDriver session not being cleanly
@@ -73,7 +73,7 @@ impl Client {
 
     /// Connect to the WebDriver host running the given address.
     ///
-    /// Prefer using [`ClientBuilder`](crate::ClientBuilder) over calling this method directly.
+    /// Prefer using [`ClientBuilder`](ClientBuilder) over calling this method directly.
     ///
     /// The given capabilities will be requested in `alwaysMatch` or `desiredCapabilities`
     /// depending on the protocol version supported by the server.
